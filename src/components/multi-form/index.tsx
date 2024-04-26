@@ -76,6 +76,14 @@ function MultiStepsForm() {
         e.preventDefault();
         console.log("formData", formData)
         alert("you have sucessfully submited the mulit steps form")
+        setstep(1)
+        setformData({
+            age: 0,
+            email:"",
+            firstName:"",
+             lastName:"",
+             password:""
+        });
     }
 
     return (
