@@ -75,6 +75,7 @@ function MultiStepsForm() {
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         console.log("formData", formData)
+        alert("you have sucessfully submited the mulit steps form")
     }
 
     return (
