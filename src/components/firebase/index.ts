@@ -18,6 +18,7 @@ const firebaseConfig = {
     messagingSenderId: FIREBASE_message_sender_id,
     appId: FIREBASE_app_id
 };
+console.log("🚀 ~ firebaseConfig:", firebaseConfig)
 
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
