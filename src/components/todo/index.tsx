@@ -65,6 +65,13 @@ function TodoApplication() {
         setCurrentTask((prevTask: TodoType) => ({ ...prevTask, task: e.target.value }));
     }, [currentTask]);
 
+    const toggleTodoCompletion = useCallback((id: string) => {
+        settodos(prev => prev.map(todo =>
+            todo.id === id ? { ...todo, isCompleted: !todo.isCompleted } : todo
+        ));
+        console.log("todos", todos)
+    }, [todos]);
+
 
     return (
         <div className='flex items-center flex-col h-[100vh]'>
@@ -85,8 +92,8 @@ function TodoApplication() {
                 <ul className='flex flex-col justify-start w-full gap-x-[20px] gap-y-[13px]'>
                     {todos.map((item) => {
                         return (
-                            <div className='flex flex-row justify-start w-full  ml-[20px] px-[5px] gap-y-[30px]'>
-                                <Checkbox>{item.isCompleted}</Checkbox>
+                            <div className='flex flex-row justify-start w-full gap-x-[20px]  ml-[20px] px-[5px] gap-y-[30px]'>
+                                <Checkbox checked={item.isCompleted} onChange={() => toggleTodoCompletion(item.id)} />
                                 {
                                     item.isCompleted ?
                                         <del className='text-white whitespace-nowrap'>{item.task.length > 35 ? item.task.slice(0., 35) + "..." : item.task}</del>
@@ -94,7 +101,11 @@ function TodoApplication() {
                                         <li className='text-white whitespace-nowrap'>{item.task.length > 35 ? item.task.slice(0., 35) + "..." : item.task}</li>
                                 }
                                 <div className='flex justify-end w-full px-[10px] gap-x-[12px]'>
-                                    <FaEdit className='text-[23px] rounded-md cursor-pointer text-blue-600' onClick={() => showModal(item)} />
+                                    <FaEdit
+                                        className='text-[23px] rounded-md cursor-pointer text-blue-600'
+                                        style={{ cursor: `${item.isCompleted ? "not-allowed" : "pointer"}` }}
+                                        onClick={item.isCompleted ? () => { } : () => showModal(item)}
+                                    />
                                     <MdDelete className='text-[23px] text-red-500 cursor-pointer rounded-md' onClick={() => deleteTask(item.id)} />
                                 </div>
                             </div>
@@ -112,6 +123,7 @@ function TodoApplication() {
                 <Input
                     type='text'
                     placeholder='enter the task'
+                    size='large'
                     value={currentTask?.task}
                     onChange={handleChangeTask} />
             </Modal>
