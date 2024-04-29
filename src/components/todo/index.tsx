@@ -1,6 +1,7 @@
-import { Checkbox, message } from 'antd';
+import { Button, Checkbox, Input, Modal, message } from 'antd';
 import React, { useCallback, useState } from 'react'
-
+import { MdDelete } from "react-icons/md";
+import { FaEdit } from "react-icons/fa";
 interface TodoType {
     task: string,
     isCompleted: boolean
@@ -9,6 +10,8 @@ interface TodoType {
 function TodoApplication() {
     const [todos, settodos] = useState<TodoType[]>([])
     const [task, settask] = useState("")
+    const [visible, setVisible] = useState(false)
+    const [currentTask, setCurrentTask] = useState<any>()
 
     const onSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
         if (task === "") {
@@ -39,10 +42,34 @@ function TodoApplication() {
         }
     }, [])
 
+    const onCancel = useCallback(() => {
+        setVisible(false);
+    }, [])
+
+    const showModal = useCallback((item: TodoType) => {
+        setCurrentTask(item)
+        setVisible(true);
+    }, [])
+
+    const handleEditTodo = useCallback(() => {
+        const updateTodo = todos.map(todo =>
+            todo.id === currentTask?.id ? { ...todo, task: currentTask.task } : todo
+        )
+        settodos(updateTodo);
+        setVisible(false);
+        setCurrentTask(null as any)
+    }, [currentTask, todos]);
+
+    const handleChangeTask = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!currentTask) return;
+        setCurrentTask((prevTask: TodoType) => ({ ...prevTask, task: e.target.value }));
+    }, [currentTask]);
+
+
     return (
-        <div className='flex items-center flex-col'>
-            <h1>Todo Application</h1>
-            <div className='flex flex-col gap-x-[20px] bg-slate-700 p-[20px]  min-w-[400px] max-w-[500px]'>
+        <div className='flex items-center flex-col h-[100vh]'>
+            <h1 className='text-[23px] font-semibold mb-[40px] mt-5'>Todo Application</h1>
+            <div className='flex flex-col gap-x-[20px] bg-slate-700 p-[20px]  min-w-[500px]  max-w-[600px] rounded-md'>
                 <form
                     onSubmit={onSubmit}
                     className='flex justify-end  gap-x-[20px] bg-slate-700 p-[20px]  min-w-[400px]'>
@@ -60,15 +87,34 @@ function TodoApplication() {
                         return (
                             <div className='flex flex-row justify-start w-full  ml-[20px] px-[5px] gap-y-[30px]'>
                                 <Checkbox>{item.isCompleted}</Checkbox>
-                                <li className='text-white whitespace-nowrap'>  {item.task.length > 35 ? item.task.slice(0., 35) + "..." : item.task}</li>
-                                <div className='flex justify-end w-full px-[10px]'>
-                                    <button className='bg-rose-900 px-[20px] py-[5px] rounded-md text-white' onClick={() => deleteTask(item.id)}>Delete</button>
+                                {
+                                    item.isCompleted ?
+                                        <del className='text-white whitespace-nowrap'>{item.task.length > 35 ? item.task.slice(0., 35) + "..." : item.task}</del>
+                                        :
+                                        <li className='text-white whitespace-nowrap'>{item.task.length > 35 ? item.task.slice(0., 35) + "..." : item.task}</li>
+                                }
+                                <div className='flex justify-end w-full px-[10px] gap-x-[12px]'>
+                                    <FaEdit className='text-[23px] rounded-md cursor-pointer text-blue-600' onClick={() => showModal(item)} />
+                                    <MdDelete className='text-[23px] text-red-500 cursor-pointer rounded-md' onClick={() => deleteTask(item.id)} />
                                 </div>
                             </div>
                         )
                     })}
                 </ul>
             </div>
+            <Modal open={visible} onCancel={onCancel} title="Edit Task" footer={
+                <div className='flex gap-x-[20px] justify-end mt-[20px]'>
+                    <Button type='primary' onClick={handleEditTodo}>Submit</Button>
+                    <Button>Cancel</Button>
+                </div>
+
+            }>
+                <Input
+                    type='text'
+                    placeholder='enter the task'
+                    value={currentTask?.task}
+                    onChange={handleChangeTask} />
+            </Modal>
         </div>
     )
 }
