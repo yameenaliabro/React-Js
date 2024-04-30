@@ -1,4 +1,4 @@
-import { Button, Checkbox, Input, Modal, message } from 'antd';
+import { Button, Checkbox, Input, Modal, Popconfirm, message } from 'antd';
 import React, { useCallback, useState } from 'react'
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
@@ -106,7 +106,9 @@ function TodoApplication() {
                                         style={{ cursor: `${item.isCompleted ? "not-allowed" : "pointer"}` }}
                                         onClick={item.isCompleted ? () => { } : () => showModal(item)}
                                     />
-                                    <MdDelete className='text-[23px] text-red-500 cursor-pointer rounded-md' onClick={() => deleteTask(item.id)} />
+                                    <Popconfirm title="Are you sure you want to delete this task?" onConfirm={(() => deleteTask(item.id))}>
+                                        <MdDelete className='text-[23px] text-red-500 cursor-pointer rounded-md' />
+                                    </Popconfirm>
                                 </div>
                             </div>
                         )
