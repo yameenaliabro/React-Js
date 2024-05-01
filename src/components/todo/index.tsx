@@ -2,7 +2,7 @@ import { Button, Checkbox, Input, Modal, Popconfirm, Spin, message } from 'antd'
 import React, { useCallback, useEffect, useState } from 'react'
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
-import { addDoc, collection, deleteDoc, doc, getDocs } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 interface TodoType {
     task: string,
@@ -30,6 +30,8 @@ function TodoApplication() {
             }
 
             const response = await addDoc(collection(db, "todos"), todo)
+            const newTodo = { ...todo, id: response.id }
+            settodos(prevTodo => [...prevTodo, newTodo])
             console.log("🚀 ~ response ~ response:", response)
             settask("")
             setLoading(false)
@@ -45,8 +47,9 @@ function TodoApplication() {
         try {
             const response = await deleteDoc(doc(db, "todos", id))
             console.log("🚀 ~ deleteTask ~ response:", response)
-            // settodos(prev => prev.filter((item) => item.id !== id))
+            settodos(prev => prev.filter((item) => item.id !== id))
             setLoading(false)
+            message.success("Todo deleted sucessfully")
         } catch (error: any) {
             setLoading(false)
             message.error(error)
@@ -62,13 +65,24 @@ function TodoApplication() {
         setVisible(true);
     }, [])
 
-    const handleEditTodo = useCallback(() => {
-        const updateTodo = todos.map(todo =>
-            todo.id === currentTask?.id ? { ...todo, task: currentTask.task } : todo
-        )
-        settodos(updateTodo);
-        setVisible(false);
-        setCurrentTask(null as any)
+    const handleEditTodo = useCallback(async () => {
+        setLoading(true);
+        try {
+            await updateDoc(doc(db, "todos", currentTask?.id), {
+                task: currentTask?.task
+            })
+            const updateTodo = todos.map(todo =>
+                todo.id === currentTask?.id ? { ...todo, task: currentTask.task } : todo
+            )
+            settodos(updateTodo);
+            setVisible(false);
+            setCurrentTask(null as any)
+            setLoading(false);
+            message.success("todo updated sucessfully")
+        } catch (err: any) {
+            setLoading(false);
+            message.error(err)
+        }
     }, [currentTask, todos]);
 
     const handleChangeTask = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {

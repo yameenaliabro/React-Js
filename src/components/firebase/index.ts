@@ -1,6 +1,9 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth"
 import { getFirestore } from "firebase/firestore";
+import firebase from "firebase/app";
+import "firebase/firestore";
+
 
 import {
     FIREBASE_Api_key,
