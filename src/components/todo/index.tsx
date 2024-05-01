@@ -2,6 +2,8 @@ import { Button, Checkbox, Input, Modal, Popconfirm, message } from 'antd';
 import React, { useCallback, useState } from 'react'
 import { MdDelete } from "react-icons/md";
 import { FaEdit } from "react-icons/fa";
+import { addDoc, collection } from 'firebase/firestore';
+import { db } from '../firebase';
 interface TodoType {
     task: string,
     isCompleted: boolean
@@ -24,6 +26,9 @@ function TodoApplication() {
             id: Math.random().toFixed(4),
             isCompleted: false
         }
+
+        const response = await addDoc(collection(db, "todos"), todo)
+        console.log("🚀 ~ response ~ response:", response)
         settodos([...todos, todo])
         settask("")
         try {
