@@ -13,5 +13,3 @@ function SSoLogin() {
 }
 
 export default SSoLogin
-
-const b = { name:"Ali", f: function(){ var self = this; console.log(this.name); (function(){ console.log(this.name); console.log(self.name); })(); } } b.f(); Huzaifa Aamir 14:15 (function(){ setTimeout(()=> console.log(1),5000); console.log(2); setTimeout(()=> console.log(3),0); console.log(4); })(); You 14:18 first console.log after the five second the is 2 and the immedetially  is console.log(4) Hover over a message to pin it keep 2 and 4 INTERVIEW - BACKEND - UMER
